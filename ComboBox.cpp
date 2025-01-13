@@ -1,14 +1,22 @@
-// Template.cpp
+// ComboBox.cpp
 
-#include "Template.h"
+#include "ComboBox.h"
 
 // Global variables
+ComboBoxWindow g_comboBoxWindow;
 ListBoxWindow g_listBoxWindow;
 StatusBarWindow g_statusBarWindow;
 
+void ComboBoxWindowSelectionChangedFunction( LPTSTR lpszItemText )
+{
+	// Add item text to list box window
+	g_listBoxWindow.AddText( lpszItemText );
+
+} // End of function ListBoxWindowSelectionChangedFunction
+
 void ListBoxWindowSelectionChangedFunction( LPTSTR lpszItemText )
 {
-	// Show item text on status bat window
+	// Show item text on status bar window
 	g_statusBarWindow.SetText( lpszItemText );
 
 } // End of function ListBoxWindowSelectionChangedFunction
@@ -67,29 +75,39 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			// Get instance
 			hInstance = ( ( LPCREATESTRUCT )lParam )->hInstance;
 
-			// Create list box window
-			if( g_listBoxWindow.Create( hWndMain, hInstance ) )
+			// Create combo box window
+			if( g_comboBoxWindow.Create( hWndMain, hInstance ) )
 			{
-				// Successfully created list box window
+				// Successfully created combo box window
 				Font font;
 
 				// Get font
 				font = DEFAULT_GUI_FONT;
 
-				// Set list box window font
-				g_listBoxWindow.SetFont( font );
+				// Set combo box window font
+				g_comboBoxWindow.SetFont( font );
 
-				// Create status bar window
-				if( g_statusBarWindow.Create( hWndMain, hInstance ) )
+				// Create list box window
+				if( g_listBoxWindow.Create( hWndMain, hInstance ) )
 				{
-					// Successfully created status bar window
+					// Successfully created list box window
 
-					// Set status bar window font
-					g_statusBarWindow.SetFont( font );
+					// Set list box window font
+					g_listBoxWindow.SetFont( font );
 
-				} // End of successfully created status bar window
+					// Create status bar window
+					if( g_statusBarWindow.Create( hWndMain, hInstance ) )
+					{
+						// Successfully created status bar window
 
-			} // End of successfully created list box window
+						// Set status bar window font
+						g_statusBarWindow.SetFont( font );
+
+					} // End of successfully created status bar window
+
+				} // End of successfully created list box window
+
+			} // End of successfully created combo box window
 
 			// Break out of switch
 			break;
@@ -101,8 +119,11 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			int nClientWidth;
 			int nClientHeight;
 			RECT rcStatus;
+			RECT rcComboBox;
 			int nStatusWindowHeight;
+			int nComboBoxWindowHeight;
 			int nListBoxWindowHeight;
+			int nListBoxWindowTop;
 
 			// Store client width and height
 			nClientWidth	= ( int )LOWORD( lParam );
@@ -111,15 +132,22 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			// Size status bar window
 			g_statusBarWindow.Size();
 
-			// Get status window size
+			// Get window sizes
 			g_statusBarWindow.GetWindowRect( &rcStatus );
+			g_comboBoxWindow.GetWindowRect( &rcComboBox );
 
 			// Calculate window sizes
 			nStatusWindowHeight		= ( rcStatus.bottom - rcStatus.top );
-			nListBoxWindowHeight	= ( nClientHeight - nStatusWindowHeight );
+			nComboBoxWindowHeight	= ( rcComboBox.bottom - rcComboBox.top );
+			nListBoxWindowHeight	= ( nClientHeight - ( nStatusWindowHeight + nComboBoxWindowHeight ) + WINDOW_BORDER_HEIGHT );
 
-			// Move list box window
-			g_listBoxWindow.Move( 0, 0, nClientWidth, nListBoxWindowHeight, TRUE );
+			// Calculate window positions
+			nListBoxWindowTop		= ( nComboBoxWindowHeight - WINDOW_BORDER_HEIGHT );
+
+
+			// Move control windows
+			g_comboBoxWindow.Move( 0, 0, nClientWidth, nClientHeight, TRUE );
+			g_listBoxWindow.Move( 0, nListBoxWindowTop, nClientWidth, nListBoxWindowHeight, TRUE );
 
 			// Break out of switch
 			break;
@@ -204,8 +232,23 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 				{
 					// Default command
 
-					// See if command message is from list box window
-					if( ( HWND )lParam == g_listBoxWindow )
+					// See if command message is from combo box window
+					if( ( HWND )lParam == g_comboBoxWindow )
+					{
+						// Command message is from combo box window
+
+						// Handle command message from combo box window
+						if( !( g_comboBoxWindow.HandleCommandMessage( wParam, lParam, ComboBoxWindowSelectionChangedFunction ) ) )
+						{
+							// Command message was not handled from combo box window
+
+							// Call default procedure
+							lr = DefWindowProc( hWndMain, uMessage, wParam, lParam );
+
+						} // End of command message was not handled from combo box window
+
+					} // End of command message is from combo box window
+					else if( ( HWND )lParam == g_listBoxWindow )
 					{
 						// Command message is from list box window
 
@@ -388,6 +431,15 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 
 			// Update main window
 			mainWindow.Update();
+
+			// Populate combo box window
+			g_comboBoxWindow.AddText( "1234567890" );
+			g_comboBoxWindow.AddText( "qwertyuiop" );
+			g_comboBoxWindow.AddText( "asdfghjkl" );
+			g_comboBoxWindow.AddText( "zxcvbnm" );
+
+			// Select first item on combo box window
+			g_comboBoxWindow.SelectItem( 0 );
 
 			// Message loop
 			while( message.Get() > 0 )
