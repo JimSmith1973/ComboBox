@@ -27,6 +27,8 @@
 
 #define MAIN_WINDOW_TEXT														"ComboBox"
 
+#define COMBO_BOX_FILE_NAME														"ComboBox.txt"
+
 #define ABOUT_MESSAGE_TEXT														"ComboBox\r\n"						\
 																				"\r\n"								\
 																				"Written by Jim Smith\r\n"			\

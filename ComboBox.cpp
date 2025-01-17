@@ -349,8 +349,30 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 		{
 			// A close message
 
-			// Destroy main window
-			DestroyWindow( hWndMain );
+			// Save combo box window
+			if( g_comboBoxWindow.Save( COMBO_BOX_FILE_NAME ) )
+			{
+				// Successfully saved combo box window
+
+				// Destroy main window
+				DestroyWindow( hWndMain );
+
+			} // End of successfully saved combo box window
+			else
+			{
+				// Unable to save combo box window
+
+				// Ensure that it is ok to close
+				if( MessageBox( hWndMain, COMBO_BOX_WINDOW_CLASS_UNABLE_TO_SAVE_WARNING_MESSAGE, WARNING_MESSAGE_CAPTION, ( MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2 ) ) == IDYES )
+				{
+					// Is ok to close
+
+					// Destroy main window
+					DestroyWindow( hWndMain );
+
+				} // End of is ok to close
+
+			} // End of unable to save combo box window
 
 			// Break out of switch
 			break;
@@ -432,11 +454,8 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			// Update main window
 			mainWindow.Update();
 
-			// Populate combo box window
-			g_comboBoxWindow.AddText( "1234567890" );
-			g_comboBoxWindow.AddText( "qwertyuiop" );
-			g_comboBoxWindow.AddText( "asdfghjkl" );
-			g_comboBoxWindow.AddText( "zxcvbnm" );
+			// Load combo box window
+			g_comboBoxWindow.Load( COMBO_BOX_FILE_NAME );
 
 			// Select first item on combo box window
 			g_comboBoxWindow.SelectItem( 0 );
