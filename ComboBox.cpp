@@ -3,6 +3,7 @@
 #include "ComboBox.h"
 
 // Global variables
+ButtonWindow g_buttonWindow;
 ComboBoxWindow g_comboBoxWindow;
 ListBoxWindow g_listBoxWindow;
 StatusBarWindow g_statusBarWindow;
@@ -87,25 +88,35 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 				// Set combo box window font
 				g_comboBoxWindow.SetFont( font );
 
-				// Create list box window
-				if( g_listBoxWindow.Create( hWndMain, hInstance ) )
+				// Create button window
+				if( g_buttonWindow.Create( hWndMain, hInstance, BUTTON_WINDOW_TEXT, BUTTON_WINDOW_ID ) )
 				{
-					// Successfully created list box window
+					// Successfully created button window
 
-					// Set list box window font
-					g_listBoxWindow.SetFont( font );
+					// Set button window font
+					g_buttonWindow.SetFont( font );
 
-					// Create status bar window
-					if( g_statusBarWindow.Create( hWndMain, hInstance ) )
+					// Create list box window
+					if( g_listBoxWindow.Create( hWndMain, hInstance ) )
 					{
-						// Successfully created status bar window
+						// Successfully created list box window
 
-						// Set status bar window font
-						g_statusBarWindow.SetFont( font );
+						// Set list box window font
+						g_listBoxWindow.SetFont( font );
 
-					} // End of successfully created status bar window
+						// Create status bar window
+						if( g_statusBarWindow.Create( hWndMain, hInstance ) )
+						{
+							// Successfully created status bar window
 
-				} // End of successfully created list box window
+							// Set status bar window font
+							g_statusBarWindow.SetFont( font );
+
+						} // End of successfully created status bar window
+
+					} // End of successfully created list box window
+
+				} // End of successfully created button window
 
 			} // End of successfully created combo box window
 
@@ -124,6 +135,8 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			int nComboBoxWindowHeight;
 			int nListBoxWindowHeight;
 			int nListBoxWindowTop;
+			int nComboBoxWindowWidth;
+			int nButtonWindowLeft;
 
 			// Store client width and height
 			nClientWidth	= ( int )LOWORD( lParam );
@@ -140,13 +153,15 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			nStatusWindowHeight		= ( rcStatus.bottom - rcStatus.top );
 			nComboBoxWindowHeight	= ( rcComboBox.bottom - rcComboBox.top );
 			nListBoxWindowHeight	= ( nClientHeight - ( nStatusWindowHeight + nComboBoxWindowHeight ) + WINDOW_BORDER_HEIGHT );
+			nComboBoxWindowWidth	= ( ( nClientWidth - BUTTON_WINDOW_WIDTH ) + WINDOW_BORDER_WIDTH );
 
 			// Calculate window positions
 			nListBoxWindowTop		= ( nComboBoxWindowHeight - WINDOW_BORDER_HEIGHT );
-
+			nButtonWindowLeft		= ( nComboBoxWindowWidth - WINDOW_BORDER_WIDTH );
 
 			// Move control windows
-			g_comboBoxWindow.Move( 0, 0, nClientWidth, nClientHeight, TRUE );
+			g_comboBoxWindow.Move( 0, 0, nComboBoxWindowWidth, nClientHeight, TRUE );
+			g_buttonWindow.Move( nButtonWindowLeft, 0, BUTTON_WINDOW_WIDTH, nComboBoxWindowHeight );
 			g_listBoxWindow.Move( 0, nListBoxWindowTop, nClientWidth, nListBoxWindowHeight, TRUE );
 
 			// Break out of switch
@@ -206,6 +221,17 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			// Select command
 			switch( LOWORD( wParam ) )
 			{
+				case BUTTON_WINDOW_ID:
+				{
+					// A button window command
+
+					// Display message
+					MessageBox( hWndMain, "To Do: Browse", INFORMATION_MESSAGE_CAPTION, ( MB_OK | MB_ICONINFORMATION ) );
+
+					// Break out of switch
+					break;
+
+				} // End of a button window command
 				case IDM_FILE_EXIT:
 				{
 					// A file exit command

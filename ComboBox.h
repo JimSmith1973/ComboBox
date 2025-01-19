@@ -11,6 +11,7 @@
 #include "..\Common\Common.h"
 
 #include "..\Classes\ArgumentListClass.h"
+#include "..\Classes\ButtonWindowClass.h"
 #include "..\Classes\ComboBoxWindowClass.h"
 #include "..\Classes\DroppedFilesClass.h"
 #include "..\Classes\FontClass.h"
@@ -28,6 +29,10 @@
 #define MAIN_WINDOW_TEXT														"ComboBox"
 
 #define COMBO_BOX_FILE_NAME														"ComboBox.txt"
+
+#define BUTTON_WINDOW_ID														( WM_USER + 1 )
+#define BUTTON_WINDOW_TEXT														"Browse"
+#define BUTTON_WINDOW_WIDTH														50
 
 #define ABOUT_MESSAGE_TEXT														"ComboBox\r\n"						\
 																				"\r\n"								\
