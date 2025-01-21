@@ -224,9 +224,37 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 				case BUTTON_WINDOW_ID:
 				{
 					// A button window command
+					BrowseForFolder bff;
 
-					// Display message
-					MessageBox( hWndMain, "To Do: Browse", INFORMATION_MESSAGE_CAPTION, ( MB_OK | MB_ICONINFORMATION ) );
+					// Allocate string memory
+					LPTSTR lpszFolderPath = new char[ STRING_LENGTH + sizeof( char ) ];
+
+					// Initialise file path
+					GetCurrentDirectory( STRING_LENGTH, lpszFolderPath );
+
+					// Browse for folder
+					if( bff.Browse( lpszFolderPath ) )
+					{
+						// Successfully browsed for folder
+						int nWhichItem;
+
+						// Add folder to combo box window
+						nWhichItem = g_comboBoxWindow.AddUniqueItem( lpszFolderPath );
+
+						// Ensure that folder was added to combo box window
+						if( nWhichItem >= 0 )
+						{
+							// Successfully added folder to combo box window
+
+							// Select folder on combo box window
+							g_comboBoxWindow.SelectItem( nWhichItem );
+
+						} // End of successfully added folder to combo box window
+
+					} // End of successfully browsed for folder
+
+					// Free string memory
+					delete [] lpszFolderPath;
 
 					// Break out of switch
 					break;

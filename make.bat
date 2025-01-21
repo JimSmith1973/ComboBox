@@ -7,6 +7,7 @@ windres Resource.rc -o Resource.o
 g++ -mwindows -m64 -static -Wall -Wextra ComboBox.cpp ^
  ^
  ..\Classes\ArgumentListClass.cpp ^
+ ..\Classes\BrowseForFolderClass.cpp ^
  ..\Classes\ButtonWindowClass.cpp ^
  ..\Classes\ComboBoxWindowClass.cpp ^
  ..\Classes\DroppedFilesClass.cpp ^

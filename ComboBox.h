@@ -11,6 +11,7 @@
 #include "..\Common\Common.h"
 
 #include "..\Classes\ArgumentListClass.h"
+#include "..\Classes\BrowseForFolderClass.h"
 #include "..\Classes\ButtonWindowClass.h"
 #include "..\Classes\ComboBoxWindowClass.h"
 #include "..\Classes\DroppedFilesClass.h"
