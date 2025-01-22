@@ -15,6 +15,7 @@
 #include "..\Classes\ButtonWindowClass.h"
 #include "..\Classes\ComboBoxWindowClass.h"
 #include "..\Classes\DroppedFilesClass.h"
+#include "..\Classes\FileFindClass.h"
 #include "..\Classes\FontClass.h"
 #include "..\Classes\ListBoxWindowClass.h"
 #include "..\Classes\MessageClass.h"

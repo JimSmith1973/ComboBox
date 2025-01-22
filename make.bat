@@ -11,6 +11,7 @@ g++ -mwindows -m64 -static -Wall -Wextra ComboBox.cpp ^
  ..\Classes\ButtonWindowClass.cpp ^
  ..\Classes\ComboBoxWindowClass.cpp ^
  ..\Classes\DroppedFilesClass.cpp ^
+ ..\Classes\FileFindClass.cpp ^
  ..\Classes\FontClass.cpp ^
  ..\Classes\ListBoxWindowClass.cpp ^
  ..\Classes\MenuClass.cpp ^

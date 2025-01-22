@@ -10,8 +10,56 @@ StatusBarWindow g_statusBarWindow;
 
 void ComboBoxWindowSelectionChangedFunction( LPTSTR lpszItemText )
 {
-	// Add item text to list box window
-	g_listBoxWindow.AddText( lpszItemText );
+	FileFind fileFind;
+
+	// Find first item in folder
+	if( fileFind.First( lpszItemText, ALL_FILES_FILTER ) )
+	{
+		// Successfully found first item in folder
+		int nFileCount = 0;
+
+		// Allocate string memory
+		LPTSTR lpszFoundItemName = new char[ STRING_LENGTH + sizeof( char ) ];
+		LPTSTR lpszStatusMessage = new char[ STRING_LENGTH + sizeof( char ) ];
+
+		// Delete all items from list box window
+		g_listBoxWindow.ResetContent();
+
+		// Loop through all items
+		do
+		{
+			// See if found item is a file
+			if( fileFind.IsFile() )
+			{
+				// Found item is a file
+
+				// Get found item name
+				fileFind.GetFileName( lpszFoundItemName );
+
+				// Add found item to list box window
+				g_listBoxWindow.AddText( lpszFoundItemName );
+
+				// Update file count
+				nFileCount ++;
+
+			} // End of found item is a file
+
+		} while( fileFind.Next() ); // End of loop through all items
+
+		// Format status message
+		wsprintf( lpszStatusMessage, FILE_FIND_CLASS_FOUND_FILES_STATUS_MESSAGE_FORMAT_STRING, lpszItemText, nFileCount );
+
+		// Show status message on status bar window
+		g_statusBarWindow.SetText( lpszStatusMessage );
+
+		// Close file find
+		fileFind.Close();
+
+		// Free string memory
+		delete [] lpszFoundItemName;
+		delete [] lpszStatusMessage;
+
+	} // End of successfully found first item in folder
 
 } // End of function ListBoxWindowSelectionChangedFunction
 
@@ -248,6 +296,9 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 
 							// Select folder on combo box window
 							g_comboBoxWindow.SelectItem( nWhichItem );
+
+							// Call selection changed function
+							ComboBoxWindowSelectionChangedFunction( lpszFolderPath );
 
 						} // End of successfully added folder to combo box window
 
@@ -512,7 +563,23 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			g_comboBoxWindow.Load( COMBO_BOX_FILE_NAME );
 
 			// Select first item on combo box window
-			g_comboBoxWindow.SelectItem( 0 );
+			if( g_comboBoxWindow.SelectItem( 0 ) == 0 )
+			{
+				// Successfully selected first item on combo box window
+
+				// Allocate string memory
+				LPTSTR lpszFirstItemText = new char[ STRING_LENGTH + sizeof( char ) ];
+
+				// Get first item text
+				g_comboBoxWindow.GetItemText( 0, lpszFirstItemText );
+
+				// Call selection changed function
+				ComboBoxWindowSelectionChangedFunction( lpszFirstItemText );
+
+				// Free string memory
+				delete [] lpszFirstItemText;
+
+			} // End of successfully selected first item on combo box window
 
 			// Message loop
 			while( message.Get() > 0 )
